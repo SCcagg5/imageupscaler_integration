@@ -1,0 +1,29 @@
+version: '3'
+
+networks:
+  api_net:
+    internal: true
+  internet:
+    driver: bridge
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api_container
+    environment:
+      TOKEN: ""
+    networks:
+      - api_net
+      - internet
+    ports:
+      - "8080:8080"
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: test_container
+    networks:
+      - api_net
+    command: python3 -m unittest discover -s tests -p 'test_*.py'
