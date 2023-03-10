@@ -1,9 +1,10 @@
-from bottle import Bottle, request, response
 import requests
-import json
-import os
-import uuid
-import time
+import base64
+
+# Décode le fichier en base64
+def decode_base64_file(file):
+    decoded_file = base64.b64decode(file)
+    return decoded_file
 
 def upscale(file):
     TOKEN = os.environ.get('TOKEN')
@@ -13,7 +14,7 @@ def upscale(file):
 
     # Enregistrer le fichier sur le disque
     with open(filename, 'wb') as f:
-        f.write(file.read())
+        f.write(decode_base64_file(file))
 
     with open(filename, 'rb') as f:
         response = requests.post(
@@ -36,7 +37,8 @@ app = Bottle()
 
 @app.post('/upscale')
 def upscale_image():
-    file = request.files.get('file').file
+    # Lire le fichier en base64
+    file = request.forms.get('file')
     result = upscale(file)
     if isinstance(result, bytes):
         response.set_header('Content-Type', 'image/png')
