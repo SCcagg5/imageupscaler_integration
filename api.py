@@ -1,4 +1,9 @@
+from bottle import Bottle, request, response
 import requests
+import json
+import os
+import uuid
+import time
 import base64
 
 # Décode le fichier en base64
